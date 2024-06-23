@@ -1,4 +1,8 @@
 {
   "clang-tidy.executable": "path/to/clang-tidy",
-  "clang-tidy.configFile": "${workspaceFolder}/.clang-tidy"
+  "clang-tidy.configFile": "${workspaceFolder}/.clang-tidy",
+  "files.associations": {
+    "istream": "cpp",
+    "iostream": "cpp"
+  }
 }

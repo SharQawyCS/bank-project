@@ -8,6 +8,7 @@
 using namespace std;
 
 // Data
+// Main Struct
 struct stClient
 {
   string accNum;
@@ -17,14 +18,16 @@ struct stClient
   float accBalance;
 };
 
-const char FILE_NAME[] = "../clients.txt";
+// External file path
+const char FILE_NAME[] = "clients.txt";
 
 // Functions Prototypes
 void showMainMenu();
 void addNewClients();
 void printClientData(stClient client);
 
-// Clear Screen
+// Functions
+//  Clear Screen
 void clearScreen()
 {
 #ifdef _WIN32
@@ -60,6 +63,41 @@ void backToMainMenu()
     cout << "Wrong, Please try Again\n";
     backToMainMenu();
   }
+}
+// Handle the app if file is empty or removed
+void performIfIsFileEmpty(const string fileName)
+{
+  vector<stClient> vClients = LoadClientsDataFromFile(fileName);
+  if (vClients.size() == 0) // File is empty
+  {
+    clearScreen();
+    cout << "You must add at least one client first..";
+    cout
+        << "\n[0] Exit  [1] Add Client\n: ";
+
+    // Choosing
+    switch (getUserChoice(0, 1))
+    {
+
+    case 1:
+      addNewClients();
+      break;
+    case 0:
+      exitProgram();
+      break;
+
+    default:
+      performDefault();
+      break;
+    }
+  }
+}
+// Called when unexpected error occures
+void performDefault()
+{
+  cout << "\nThere is an unexpected error\nERR_UNEX\n";
+  cout << "EXIT PROGRAM!!!!!!\n";
+  exitProgram();
 }
 
 // Read inputs
@@ -127,7 +165,6 @@ vector<string> splitString(string S1, string Delim)
   }
   return vString;
 }
-
 stClient convertLineToRecored(string line, string sep = "#//#")
 {
   stClient client;
@@ -141,7 +178,6 @@ stClient convertLineToRecored(string line, string sep = "#//#")
 
   return client;
 }
-
 vector<stClient> LoadClientsDataFromFile(string fileName)
 {
   vector<stClient> vClients;
@@ -160,7 +196,6 @@ vector<stClient> LoadClientsDataFromFile(string fileName)
   }
   return vClients;
 }
-
 string generateLineFromRecord(stClient client, string sep = "#//#")
 {
   string line = client.accNum + sep;
@@ -171,7 +206,6 @@ string generateLineFromRecord(stClient client, string sep = "#//#")
 
   return line;
 }
-
 void addDataLineToFile(string fileName, string line)
 {
   fstream myFile;
@@ -182,13 +216,11 @@ void addDataLineToFile(string fileName, string line)
     myFile.close();
   }
 }
-
 void addClientToFile(stClient client, string fileName)
 {
   string dataLine = generateLineFromRecord(client);
   addDataLineToFile(fileName, dataLine);
 }
-
 void addNewClientsVectorToFile(vector<stClient> vClients)
 {
   remove(FILE_NAME);
@@ -197,7 +229,6 @@ void addNewClientsVectorToFile(vector<stClient> vClients)
     addClientToFile(client, FILE_NAME);
   }
 }
-
 stClient getClientFromFileByAccNum(string fileName, string accNum)
 {
   vector<stClient> vClients = LoadClientsDataFromFile(fileName);
@@ -295,6 +326,7 @@ stClient readNewClient()
       addNewClients();
       break;
     default:
+      performDefault();
       break;
     }
   }
@@ -321,6 +353,7 @@ void addNewClients()
     addNewClients();
     break;
   default:
+    performDefault();
     break;
   }
 }
@@ -360,6 +393,7 @@ void deleteClient()
       deleteClient();
       break;
     default:
+      performDefault();
       break;
     }
   }
@@ -379,6 +413,7 @@ void deleteClient()
       deleteClient();
       break;
     default:
+      performDefault();
       break;
     }
   }
@@ -415,6 +450,7 @@ void updateClientInfo()
       updateClientInfo();
       break;
     default:
+      performDefault();
       break;
     }
   }
@@ -444,6 +480,7 @@ void updateClientInfo()
       updateClientInfo();
       break;
     default:
+      performDefault();
       break;
     }
   }
@@ -495,6 +532,7 @@ void findClient()
       findClient();
       break;
     default:
+      performDefault();
       break;
     }
   }
@@ -503,6 +541,7 @@ void findClient()
 // Main Menu Function
 void showMainMenu()
 {
+  performIfIsFileEmpty(FILE_NAME);
   clearScreen();
   // Header
   cout << "-----------------------------\n"
@@ -546,6 +585,7 @@ void showMainMenu()
     break;
 
   default:
+    performDefault();
     break;
   }
 }
