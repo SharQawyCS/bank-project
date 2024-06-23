@@ -33,7 +33,7 @@
 
 
 
-## Main Menu Options:
+## Main Menu Options
 
 [1] Show Clients List: Display the list of all clients.
 
@@ -48,7 +48,7 @@
 [0] EXIT: Exit the application.
 
 
-## Notes:
+## Notes
 **Error Handling:** The application includes basic error handling to manage invalid inputs and unexpected errors.
 
 **Cross-Platform Compatibility:** The clearScreen and exitProgram functions ensure the application works on different operating systems.
