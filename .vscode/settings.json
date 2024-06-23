@@ -1,0 +1,4 @@
+{
+  "clang-tidy.executable": "path/to/clang-tidy",
+  "clang-tidy.configFile": "${workspaceFolder}/.clang-tidy"
+}

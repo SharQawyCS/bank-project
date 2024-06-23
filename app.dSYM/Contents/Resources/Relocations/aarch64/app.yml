@@ -1,0 +1,5 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     '/Users/sharqawycs/Desktop/projects/cpp/bank-project/app'
+relocations:     []
+...
