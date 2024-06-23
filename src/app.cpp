@@ -17,7 +17,7 @@ struct stClient
   float accBalance;
 };
 
-const char FILE_NAME[] = "clients.txt";
+const char FILE_NAME[] = "../clients.txt";
 
 // Functions Prototypes
 void showMainMenu();
