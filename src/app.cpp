@@ -23,8 +23,11 @@ const char FILE_NAME[] = "clients.txt";
 
 // Functions Prototypes
 void showMainMenu();
+void showTransMenu();
+short getUserChoice(short min, short max);
 void addNewClients();
 void printClientData(stClient client);
+vector<stClient> LoadClientsDataFromFile(string fileName);
 
 // Functions
 //  Clear Screen
@@ -64,6 +67,13 @@ void backToMainMenu()
     backToMainMenu();
   }
 }
+// Called when unexpected error occures, It should never be called
+void performDefault()
+{
+  cout << "\nThere is an unexpected error\nERR_UNEX\n";
+  cout << "EXIT PROGRAM!!!!!!\n";
+  exitProgram();
+}
 // Handle the app if file is empty or removed
 void performIfIsFileEmpty(const string fileName)
 {
@@ -91,13 +101,6 @@ void performIfIsFileEmpty(const string fileName)
       break;
     }
   }
-}
-// Called when unexpected error occures
-void performDefault()
-{
-  cout << "\nThere is an unexpected error\nERR_UNEX\n";
-  cout << "EXIT PROGRAM!!!!!!\n";
-  exitProgram();
 }
 
 // Read inputs
@@ -538,6 +541,133 @@ void findClient()
   }
 }
 
+// For Transaction Menu [6]
+
+float getAmountOfMoney(string transType, int currentClientBalance)
+{
+  float money = readFloat("");
+  while (money <= 0)
+  {
+    cout << "Invalid Quantity! Try Agian: ";
+    money = readFloat("");
+  }
+
+  // Make this in function
+  if (transType == "WITHDRAW")
+  {
+    while (money > currentClientBalance)
+    {
+      cout << "You cannot withdraw money that you do not own\n";
+      cout << "Please enter another amount: ";
+      money = readFloat("");
+    }
+    money *= -1;
+  }
+
+  return money;
+}
+float editClientBalance(string fileName, string accNum, string transType)
+{
+
+  stClient currentClient = getClientFromFileByAccNum(FILE_NAME, accNum);
+  clearScreen();
+  printClientData(currentClient);
+  eraseClientByClientNumber(FILE_NAME, accNum);
+
+  cout << "Money you want to " + transType + ": ";
+
+  float money = getAmountOfMoney(transType, currentClient.accBalance);
+  currentClient.accBalance += money;
+  addClientToFile(currentClient, FILE_NAME);
+
+  return currentClient.accBalance;
+}
+void performDeposit(string transType)
+{
+  clearScreen();
+
+  string accNumByUser = readString("Plz enter account number to " + transType + ": ");
+  if (isClientExist(FILE_NAME, accNumByUser) == -1)
+  {
+    cout << "No Account with Number " << accNumByUser << endl;
+    cout << "\n[0] Back to Transactions Menu\n[1] Try Agian\n: ";
+    switch (getUserChoice(0, 1))
+    {
+    case 0:
+      showTransMenu();
+      break;
+    case 1:
+      performDeposit(transType);
+      break;
+    default:
+      performDefault();
+      break;
+    }
+  }
+  else
+  {
+    clearScreen();
+    float balanceAfterUpdate = editClientBalance(FILE_NAME, accNumByUser, transType);
+    cout << "Now, Account with Number " << accNumByUser << " have: $" << balanceAfterUpdate << endl;
+    cout << "\n[0] Back to Transactions Menu\n[1]" << transType + " Another Client\n: ";
+    switch (getUserChoice(0, 1))
+    {
+    case 0:
+      showTransMenu();
+      break;
+    case 1:
+      performDeposit(transType);
+      break;
+    default:
+      performDefault();
+      break;
+    }
+  }
+}
+
+void showTransMenu()
+{
+
+  clearScreen();
+  // Header
+  cout << "-----------------------------\n"
+       << "  Transactions Menu Screen   \n"
+       << "-----------------------------\n";
+
+  // Options
+  cout << "[1] Deposit.\n"
+       << "[2] Withdraw.\n"
+       << "[3] Total Balances\n"
+       << "[0] Main Menu.\n";
+
+  // Footer
+  cout
+      << "-----------------------------\n"
+      << "  Choose from [0] to [3]... ";
+
+  // Choosing
+  switch (getUserChoice(0, 3))
+  {
+  case 1:
+    performDeposit("DEPOSIT");
+    break;
+  case 2:
+    performDeposit("WITHDRAW");
+    break;
+  case 3:
+
+    break;
+
+  case 0:
+    showMainMenu();
+    break;
+
+  default:
+    performDefault();
+    break;
+  }
+}
+
 // Main Menu Function
 void showMainMenu()
 {
@@ -554,15 +684,16 @@ void showMainMenu()
        << "[3] Delete Client\n"
        << "[4] Update Client Info\n"
        << "[5] Find Client.\n"
+       << "[6] Show Transactions Menu.\n"
        << "[0] EXIT.\n";
 
   // Footer
   cout
       << "-----------------------------\n"
-      << "  Choose from [0] to [5]... ";
+      << "  Choose from [0] to [6]... ";
 
   // Choosing
-  switch (getUserChoice(0, 5))
+  switch (getUserChoice(0, 6))
   {
   case 1:
     showClientList();
@@ -578,6 +709,9 @@ void showMainMenu()
     break;
   case 5:
     findClient();
+    break;
+  case 6:
+    showTransMenu();
     break;
 
   case 0:
