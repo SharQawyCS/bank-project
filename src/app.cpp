@@ -67,6 +67,23 @@ void backToMainMenu()
     backToMainMenu();
   }
 }
+// Back To Transactions Menu
+void backToTransMenu()
+{
+  cout << "\nPress 0 to back to transactions menu: ";
+  string choice;
+  cin >> choice;
+  if (choice == "0")
+  {
+    clearScreen();
+    showTransMenu();
+  }
+  else
+  {
+    cout << "Wrong, Please try Again\n";
+    backToTransMenu();
+  }
+}
 // Called when unexpected error occures, It should never be called
 void performDefault()
 {
@@ -542,7 +559,6 @@ void findClient()
 }
 
 // For Transaction Menu [6]
-
 float getAmountOfMoney(string transType, int currentClientBalance)
 {
   float money = readFloat("");
@@ -624,10 +640,48 @@ void performDeposit(string transType)
     }
   }
 }
+void printBalanceHeaderRow(int clientsNO)
+{
+  cout << "\n\t\t\tClient List (" << clientsNO << ") Client(s).";
+  cout << "\n_________________________________________";
+  cout << "________________________________\n"
+       << endl;
+  cout << "| " << left << setw(15) << "Accout Number";
+  cout << "| " << left << setw(25) << "Client Name";
+  cout << "| " << left << setw(15) << "Balance";
+  cout << "\n_________________________________________";
+  cout << "________________________________\n"
+       << endl;
+}
+void printBalanceOneRow(stClient client)
+{
+  cout << "| " << setw(15) << left << client.accNum;
+  cout << "| " << setw(25) << left << client.name;
+  cout << "| " << setw(15) << left << client.accBalance;
+}
+void showBalanceList()
+{
+  clearScreen();
+  vector<stClient> vClients = LoadClientsDataFromFile(FILE_NAME);
+  printBalanceHeaderRow(vClients.size());
+
+  float totalBalance = 0;
+  for (stClient &singleClient : vClients)
+  {
+    printBalanceOneRow(singleClient);
+    cout << "\n";
+    totalBalance += singleClient.accBalance;
+  }
+  cout << "_________________________________________";
+  cout << "________________________________\n\n";
+
+  cout << "Total Bank Balance: " << totalBalance << endl;
+
+  backToTransMenu();
+}
 
 void showTransMenu()
 {
-
   clearScreen();
   // Header
   cout << "-----------------------------\n"
@@ -655,7 +709,7 @@ void showTransMenu()
     performDeposit("WITHDRAW");
     break;
   case 3:
-
+    showBalanceList();
     break;
 
   case 0:
